@@ -129,6 +129,10 @@ class rshell{
 	    while (!forceExit){
 		cout << "$";
 	        getline(cin, commands);
+		if (commands == "exit"){
+	            cout << "Forced Exit." << endl;
+		    return;
+		}
 		if (commands != "" && commands != "exit"){
 		    parseAllCommands();
                     executeAllCommands();
