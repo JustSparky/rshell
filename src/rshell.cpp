@@ -68,14 +68,17 @@ class rshell{
 		j = 0;
 		if (checkCommandRun()){
 	            while (!checkBreaker(commandlist.at(i))){
+			//Exit check
 	       	        if (commandlist.at(i) == "exit"){
 	                    forceExit = true;
-		            exit(1);
+		            return;
 		        }
-	                if (commandlist.at(i) == "#"){
+			//Comment check
+	                if (commandlist.at(i) == "#" || checkComment(commandlist.at(i))){
 		            executeCommand(commandsublist);
 		            return;
 		        }
+			//Adds command to the list
 	                commandsublist.push_back(commandlist.at(i));
 			if (commandsublist.at(j).at(commandsublist.at(j).length() - 1) == ';'){
 			    commandsublist.at(j).erase(commandsublist.at(j).length() - 1);
@@ -97,6 +100,13 @@ class rshell{
 		executeCommand(commandsublist);
 		commandsublist.clear();
 	    }
+	}
+	//Checks if there is a comment sign in the first letter returns true
+	bool checkComment(string str){
+	    if (str.at(0) == '#'){
+		return true;
+	    }
+	    return false;
 	}
 	//Checks if the string is a breaker
 	bool checkBreaker(string str){
@@ -129,19 +139,13 @@ class rshell{
 	    while (!forceExit){
 		cout << "$";
 	        getline(cin, commands);
-		if (commands == "exit"){
-	            cout << "Forced Exit." << endl;
-		    return;
-		}
 		if (commands != "" && commands != "exit"){
 		    parseAllCommands();
                     executeAllCommands();
 		}
-		if(commands == "exit"){
-		    forceExit = true;
-		}
-		if(forceExit){
+		if (commands == "exit"){
 		    cout << "Forced Exit." << endl;
+		    forceExit = true;
 		    return;
 		}
 		commandlist.clear();
