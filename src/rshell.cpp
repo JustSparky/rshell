@@ -38,27 +38,32 @@ class rshell{
 		// Executes one command and sets prevCommandPass to true or false.
 		void executeCommand(vector<string> com){
 	    		char* argv[1024];
-	    		int pid_child;
-	    		int status_child;
-             
+	    		pid_t p = getpid();
+	    		pid_t pid = fork();
+             		int status;
+
         		for(unsigned int i = 0; i < com.size(); i++){
 	        		argv[i] = (char*)com.at(i).c_str();
         		}
 	    		argv[com.size()] = NULL;
-	    		pid_child = fork();
-	    		if (pid_child == 0){
-	        		if(execvp(argv[0], argv) == -1){
-			    		perror("execvp failed: ");
-			    		prevCommandPass = false;
-			    		return;
+			
+			if (pid == 0){
+				execvp(argv[0], argv);
+				perror("execvp failed: ");
+				prevCommandPass = false;
+			}
+			else if (pid > 0){
+				if ((p = wait(&status)) < 0){
+					perror("child failed: ");
+					prevCommandPass = false;
+					_exit(1);
 				}
-	    		}
-        		else{
-	       			if (waitpid(pid_child, &status_child, 0) == -1){
-			    		perror("pid incorrect: ");
-				}
-	 	   	}
-	    		prevCommandPass = true;
+			}
+			else{
+				perror("fork failed: ");
+				_exit(1);
+			}
+
 		}	
 
 		//Splits commandlist into commands with their arguments then calls executeCommand to run them.
@@ -72,9 +77,9 @@ class rshell{
         				while (!checkBreaker(commandlist.at(i))){
 						//Exit check
        	        				if (commandlist.at(i) == "exit"){
-							cout << "Forced Exit.";
+							cout << "Forced Exit." << endl;
                    					forceExit = true;
-	        					return;
+	        					_Exit(0);
 	        				}
 						// Comment check
             					if (commandlist.at(i) == "#" || checkComment(commandlist.at(i))){
