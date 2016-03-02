@@ -11,29 +11,29 @@ using namespace std;
 
 class rshell{
     protected:
-		//Data Members
-        string commands;
-		string nextConnector;
-        vector<string> commandlist;
-		bool prevCommandPass;
-		bool forceExit;
+	//Data Members
+       	string commands;
+	string nextConnector;
+	vector<string> commandlist;
+	bool prevCommandPass;
+	bool forceExit;
 
     public:
-		//Constructor
+	//Constructor
         rshell(){
 	    	commands = "";
 	    	nextConnector = ";";
 	    	prevCommandPass = true;
 	    	forceExit = false;
-		}
+	}
 
-		// Parses the string (strings ending in ';' will keep the ';')
-		void parseAllCommands(){
-			char_separator<char> delims(" ");
-	    	tokenizer<char_separator<char> > tokenlist(commands, delims);
-        	for (tokenizer<char_separator<char> >::iterator i = tokenlist.begin(); i != tokenlist.end(); i++){
+	// Parses the string (strings ending in ';' will keep the ';')
+	void parseAllCommands(){
+		char_separator<char> delims(" ");
+    		tokenizer<char_separator<char> > tokenlist(commands, delims);
+	       	for (tokenizer<char_separator<char> >::iterator i = tokenlist.begin(); i != tokenlist.end(); i++){
 	    		string com(*i);
-				commandlist.push_back(com);
+			commandlist.push_back(com);
         	}
     	}
 
@@ -53,15 +53,15 @@ class rshell{
 		    		perror("execvp failed: ");
 		    		prevCommandPass = false;
 		    		return;
-				}
+			}
 	    	}
         	else{
 	       		if (waitpid(pid_child, &status_child, 0) == -1){
 		    		perror("pid incorrect: ");
-				}
+			}
 	    	}
 	    	prevCommandPass = true;
-		}
+	}
 
 		//Splits commandlist into commands with their arguments then calls executeCommand to run them.
 		void executeAllCommands(){
@@ -69,33 +69,34 @@ class rshell{
 	    	unsigned int i = 0;
 	    	unsigned int j = 0;
 	    	while (i < commandlist.size()){
-				j = 0;
-				if (checkCommandRun()){
-	        		while (!checkBreaker(commandlist.at(i))){
-						//Exit check
+			j = 0;
+			if (checkCommandRun()){
+	        	while (!checkBreaker(commandlist.at(i))){
+				//Exit check
 	       	        	if (commandlist.at(i) == "exit"){
-	                    	forceExit = true;
-		            	return;
-		        		}
-						// Comment check
-	            		if (commandlist.at(i) == "#" || checkComment(commandlist.at(i))){
-		            		executeCommand(commandsublist);
-		            		return;
-		        		}
-						//Adds command to the list
-	            		commandsublist.push_back(commandlist.at(i));
-						if (commandsublist.at(j).at(commandsublist.at(j).length() - 1) == ';'){
-				    		commandsublist.at(j).erase(commandsublist.at(j).length() - 1);
-							nextConnector = ';';
-			    			break;
-						}
-		        		i++;
-						j++;
-						if (i == commandlist.size()){
-			    			executeCommand(commandsublist);
-			    			return;
-						}
-                	}
+					cout << "Forced Exit.";
+	                   		forceExit = true;
+		        		return;
+		        	}
+				// Comment check
+	            	if (commandlist.at(i) == "#" || checkComment(commandlist.at(i))){
+		        	executeCommand(commandsublist);
+		        	return;
+		        }
+			//Adds command to the list
+	            	commandsublist.push_back(commandlist.at(i));
+			if (commandsublist.at(j).at(commandsublist.at(j).length() - 1) == ';'){
+				commandsublist.at(j).erase(commandsublist.at(j).length() - 1);
+				nextConnector = ';';
+				break;
+			}
+		        i++;
+			j++;
+			if (i == commandlist.size()){
+				executeCommand(commandsublist);
+				return;
+			}
+                }
 	                if (checkBreaker(commandlist.at(i))){
    		 		    	nextConnector = commandlist.at(i);
 			    	}
@@ -108,10 +109,10 @@ class rshell{
 
 		//	Checks if there is a '#' at the front of the string
 		bool checkComment(string str){
-		    if (str.at(0) == '#'){
+			if (str.at(0) == '#'){
 				return true;
-		    }
-		    return false;
+			}
+			return false;
 		}
 
 		//	Checks if the string is a breaker
@@ -144,18 +145,14 @@ class rshell{
 
 		//Starts the program.
 		void run(){
-		    while (!forceExit){
-				cout << "$";
+		    while (!forceExit && commands != "exit"){
+			cout << "$";
 		    	getline(cin, commands);
 		    	parseAllCommands();
   	 	     	executeAllCommands();
-		
-				if (commands == "exit"){
-			    	cout << "Forced Exit." << endl;
-			    	forceExit = true;
-			    return;
-			}
 			commandlist.clear();
+			nextConnector = ";";
+			prevCommandPass = true;	
 		    }
 		}
 };
