@@ -82,6 +82,7 @@ class rshell{
 	        					_Exit(0);
 	        				}
 						// Comment check
+						cout << "Made it past.";
             					if (commandlist.at(i) == "#" || checkComment(commandlist.at(i))){
 		        				executeCommand(commandsublist);
 		        				return;
