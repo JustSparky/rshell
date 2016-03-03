@@ -51,6 +51,7 @@ class rshell{
 				execvp(argv[0], argv);
 				perror("execvp failed: ");
 				prevCommandPass = false;
+				_exit(1);
 			}
 			else if (pid > 0){
 				if ((p = wait(&status)) < 0){
@@ -82,7 +83,6 @@ class rshell{
 	        					_Exit(0);
 	        				}
 						// Comment check
-						cout << "Made it past.";
             					if (commandlist.at(i) == "#" || checkComment(commandlist.at(i))){
 		        				executeCommand(commandsublist);
 		        				return;
