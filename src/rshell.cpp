@@ -16,6 +16,7 @@ class rshell{
 		string nextConnector;
 		vector<string> commandlist;
 		bool prevCommandPass;
+		bool allCount;
 		bool forceExit;
 	public:
 		//Constructor
@@ -24,6 +25,7 @@ class rshell{
 	    		nextConnector = ";";
 	    		prevCommandPass = true;
 	    		forceExit = false;
+			allCount = true;
 		}
 		// Parses the string (strings ending in ';' will keep the ';')
 		void parseAllCommands(){
@@ -48,7 +50,9 @@ class rshell{
 	    		argv[com.size()] = NULL;
 			
 			if (pid == 0){
-				execvp(argv[0], argv);
+				if (execvp(argv[0], argv)){
+					prevCommandPass = true;
+				}
 				perror("execvp failed: ");
 				prevCommandPass = false;
 				_exit(1);
@@ -102,6 +106,30 @@ class rshell{
 						}		
                 			}		
 	                		if (checkBreaker(commandlist.at(i))){
+						if (nextConnector == "||"){
+							if (allCount == true){
+								prevCommandPass = true;
+							}
+							else{
+								if (prevCommandPass == false){
+									allCount = false;
+								}
+								else{
+									allCount = true;
+								}
+							}
+						}
+						else if (nextConnector == "&&"){
+							if (allCount == true){
+								if (prevCommandPass == false){
+									allCount = false;
+								}
+							}
+						}
+						else if (nextConnector == ";"){
+							allCount = true;
+							prevCommandPass = true;
+						}
    		 			    	nextConnector = commandlist.at(i);
 			    		}
 					i++;
@@ -130,13 +158,15 @@ class rshell{
 		// Checks if the next command should be run
 		bool checkCommandRun(){
 			if (nextConnector == "||"){
-				if(prevCommandPass){
+				if(allCount == true){
 		        		return false;
 				}
-				return true;
+				else{
+					return true;
+				}
 		    	}
 			if (nextConnector == "&&"){
-				if(prevCommandPass){
+				if(allCount == true){
 				    	return true;
 				}
 				return false;
