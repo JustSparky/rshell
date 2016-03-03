@@ -139,6 +139,7 @@ class rshell{
 				if(prevCommandPass){
 				    	return true;
 				}
+				cout << "TESTED FALSE" << endl;
 				return false;
 			}
 			if (nextConnector == ";"){
