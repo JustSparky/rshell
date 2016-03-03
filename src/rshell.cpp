@@ -169,6 +169,7 @@ class rshell{
 				if(allCount == true){
 				    	return true;
 				}
+				cout << "TESTED FALSE" << endl;
 				return false;
 			}
 			if (nextConnector == ";"){
