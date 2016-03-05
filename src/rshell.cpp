@@ -78,7 +78,7 @@ class rshell{
 			while (i < commandlist.size()){
 				j = 0;
 				if (checkCommandRun()){
-					while (!checkBreaker(commandlist.at(i))){
+					while (!checkBreaker(i)){
 						//Exit check
 						if (commandlist.at(i) == "exit"){
 							cout << "Forced Exit." << endl;
@@ -92,11 +92,6 @@ class rshell{
 						}
 						//Adds command to the list
 						commandsublist.push_back(commandlist.at(i));
-						if (commandsublist.at(j).at(commandsublist.at(j).length() - 1) == ';'){
-							commandsublist.at(j).erase(commandsublist.at(j).length() - 1);
-							nextConnector = ';';
-							break;
-						}
 						i++;
 						j++;
 						if (i == commandlist.size()){
@@ -104,7 +99,7 @@ class rshell{
 							return;
 						}		
 					}		
-					if (checkBreaker(commandlist.at(i))){
+					if (checkBreaker(i)){
 						if (nextConnector == "||"){
 							if (allCount == true){
 								prevCommandPass = true;
@@ -123,6 +118,10 @@ class rshell{
 								if (prevCommandPass == false){
 									allCount = false;
 								}
+							}
+							else{
+								allCount = false;
+								prevCommandPass = false;
 							}
 						}
 						else if (nextConnector == ";"){
@@ -147,11 +146,23 @@ class rshell{
 		}
 		
 		//	Checks if the string is a breaker
-		bool checkBreaker(string str){
-			if (str == "||" || str == "&&" || str == ";"){
-				return true;
+		bool checkBreaker(int i){
+			if (i < commandlist.size() + 1){
+				if (commandlist.at(i) == "|" && commandlist.at(i + 1) == "|"){
+					return true;
+				}
+				else if (commandlist.at(i) == "&" && commandlist.at(i + 1) == "&"){
+					return true;
+				}
+				else if (commandlist.at(i) == ";"){
+					return true;
+				else{
+					return false;
+				}
 			}
-			return false;
+			else
+				return false;
+			}
 		}
 
 		// Checks if the next command should be run
@@ -164,17 +175,20 @@ class rshell{
 					return true;
 				}
 			}
-			if (nextConnector == "&&"){
+			else if (nextConnector == "&&"){
 				if(allCount == true){
 					return true;
 				}
-				cout << "TESTED FALSE" << endl;
-				return false;
+				else{
+					return false;
+				}
 			}
-			if (nextConnector == ";"){
+			else if (nextConnector == ";"){
 				return true;
 			}
-			return true;
+			else{
+				return false;
+			}
 		}
 
 		//Starts the program.
