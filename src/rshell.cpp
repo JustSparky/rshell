@@ -27,6 +27,7 @@ class rshell{
 			forceExit = false;
 			allCount = true;
 		}
+
 		// Parses the string (strings ending in ';' will keep the ';')
 		void parseAllCommands(){
 			char_separator<char> delims(" ");
