@@ -30,7 +30,10 @@ class rshell{
 
 		// Parses the string (strings ending in ';' will keep the ';')
 		void parseAllCommands(){
-			char_separator<char> delims(" ");
+			char_separator<char> delims(" ","&,;,|");
+			/* code for parenthesis/brackets
+			 * char_separator<char> delims(" ", " &,;,|,(,),[,]");
+			*/
 			tokenizer<char_separator<char> > tokenlist(commands, delims);
 			for (tokenizer<char_separator<char> >::iterator i = tokenlist.begin(); i != tokenlist.end(); i++){
 				string com(*i);
@@ -98,7 +101,7 @@ class rshell{
 						if (i == commandlist.size()){
 							executeCommand(commandsublist);
 							return;
-						}		
+						}	
 					}		
 					if (checkBreaker(i)){
 						if (nextConnector == "||"){
@@ -143,12 +146,12 @@ class rshell{
 			if (str.at(0) == '#'){
 				return true;
 			}
-			return false
+			return false;
 		}
 		
 		//	Checks if the string is a breaker
 		bool checkBreaker(int i){
-			if (i < commandlist.size() + 1){
+			if ( (unsigned)i < commandlist.size() - 1){
 				if (commandlist.at(i) == "|" && commandlist.at(i + 1) == "|"){
 					return true;
 				}
@@ -157,14 +160,22 @@ class rshell{
 				}
 				else if (commandlist.at(i) == ";"){
 					return true;
+				}
 				else{
 					return false;
 				}
 			}
-			else
+			else if( (unsigned)i == commandlist.size() - 1){
+				if(commandlist.at(i) == ";"){
+					return true;
+				}
+				return false;
+			}
+			else{
 				return false;
 			}
 		}
+	
 
 		// Checks if the next command should be run
 		bool checkCommandRun(){
