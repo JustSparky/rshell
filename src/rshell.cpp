@@ -56,23 +56,23 @@ class rshell{
 
 			if (pid == 0){
 				prevCommandPass = true;
-				execvp(argv[0], argv);
+				if (execvp(argv[0], argv) == -1){
+					prevCommandPass = false;
+					allCount = false;
+					perror("execvp failed: ");
+					exit(0);
+				}
 				prevCommandPass = false;
-				perror("execvp failed: ");
-				cout << prevCommandPass;
-				_exit(1);
 			}
-			else if (pid > 0){
+			else{
 				if ((p = wait(&status)) < 0){
 					perror("child failed: ");
 					prevCommandPass = false;
-					_exit(1);
+					return;
 				}
 			}
-			else{
-				perror("fork failed: ");
-				_exit(1);
-			}
+			prevCommandPass = false;
+			return;
 		}	
 
 		//Splits commandlist into commands with their arguments then calls executeCommand to run them.
