@@ -51,9 +51,8 @@ class rshell{
 			argv[com.size()] = NULL;
 
 			if (pid == 0){
-				if (execvp(argv[0], argv)){
-					prevCommandPass = true;
-				}
+				prevCommandPass = true;
+				execvp(argv[0], argv);
 				perror("execvp failed: ");
 				prevCommandPass = false;
 				_exit(1);
@@ -129,7 +128,15 @@ class rshell{
 							allCount = true;
 							prevCommandPass = true;
 						}
-						nextConnector = commandlist.at(i);
+						if (commandlist.at(i) == "|"){
+							nextConnector = "||";
+						}
+						else if (commandlist.at(i) == "&"){
+							nextConnector = "&&";
+						}
+						else if (commandlist.at(i) == ";"){
+							nextConnector = ";";
+						}
 					}
 					i++;
 				}
@@ -143,12 +150,12 @@ class rshell{
 			if (str.at(0) == '#'){
 				return true;
 			}
-			return false
+			return false;
 		}
 		
 		//	Checks if the string is a breaker
-		bool checkBreaker(int i){
-			if (i < commandlist.size() + 1){
+		bool checkBreaker(unsigned int i){
+			if (i < (commandlist.size() + 1)){
 				if (commandlist.at(i) == "|" && commandlist.at(i + 1) == "|"){
 					return true;
 				}
@@ -157,11 +164,12 @@ class rshell{
 				}
 				else if (commandlist.at(i) == ";"){
 					return true;
+				}
 				else{
 					return false;
 				}
 			}
-			else
+			else{
 				return false;
 			}
 		}
