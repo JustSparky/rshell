@@ -30,7 +30,7 @@ class rshell{
 
 		// Parses the string (strings ending in ';' will keep the ';')
 		void parseAllCommands(){
-			char_separator<char> delims(" ","&,;,|");
+			char_separator<char> delims(" ","&,;,|,(,),[,]");
 			/* code for parenthesis/brackets
 			 * char_separator<char> delims(" ", " &,;,|,(,),[,]");
 			*/
