@@ -38,6 +38,7 @@ class rshell{
 			for (tokenizer<char_separator<char> >::iterator i = tokenlist.begin(); i != tokenlist.end(); i++){
 				string com(*i);
 				commandlist.push_back(com);
+				cout << com << endl;
 			}
 		}
 
@@ -56,8 +57,9 @@ class rshell{
 			if (pid == 0){
 				prevCommandPass = true;
 				execvp(argv[0], argv);
-				perror("execvp failed: ");
 				prevCommandPass = false;
+				perror("execvp failed: ");
+				cout << prevCommandPass;
 				_exit(1);
 			}
 			else if (pid > 0){
@@ -100,8 +102,13 @@ class rshell{
 						if (i == commandlist.size()){
 							executeCommand(commandsublist);
 							return;
-						}	
-					}		
+						}
+					}
+					executeCommand(commandsublist);
+					commandsublist.clear();
+					if (prevCommandPass == false){
+						allCount = false;
+					}
 					if (checkBreaker(i)){
 						if (nextConnector == "||"){
 							if (allCount == true){
@@ -140,11 +147,13 @@ class rshell{
 						else if (commandlist.at(i) == ";"){
 							nextConnector = ";";
 						}
+						i++;
 					}
 					i++;
 				}
-				executeCommand(commandsublist);
-				commandsublist.clear();
+				else{
+					i++;
+				}
 			}
 		}
 
@@ -158,7 +167,7 @@ class rshell{
 		
 		//	Checks if the string is a breaker
 		bool checkBreaker(int i){
-			if ( (unsigned)i < commandlist.size() - 1){
+			if ( (unsigned)i < commandlist.size() + 1){
 				if (commandlist.at(i) == "|" && commandlist.at(i + 1) == "|"){
 					return true;
 				}
@@ -172,7 +181,7 @@ class rshell{
 					return false;
 				}
 			}
-			else if( (unsigned)i == commandlist.size() - 1){
+			else if( (unsigned)i == commandlist.size() + 1){
 				if(commandlist.at(i) == ";"){
 					return true;
 				}
