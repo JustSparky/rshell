@@ -45,34 +45,29 @@ class rshell{
 		// Executes one command and sets prevCommandPass to true or false.
 		void executeCommand(vector<string> com){
 			char* argv[1024];
-			pid_t p = getpid();
-			pid_t pid = fork();
-			int status;
 
 			for(unsigned int i = 0; i < com.size(); i++){
 				argv[i] = (char*)com.at(i).c_str();
 			}
 			argv[com.size()] = NULL;
 
+			pid_t pid;
+			int status;
+			pid = fork();
 			if (pid == 0){
 				prevCommandPass = true;
-				if (execvp(argv[0], argv) == -1){
-					prevCommandPass = false;
-					allCount = false;
-					perror("execvp failed: ");
-					exit(0);
-				}
-				prevCommandPass = false;
+				execvp(argv[0], argv);
+				perror("execvp failed: ");
+				exit(-1);
 			}
 			else{
-				if ((p = wait(&status)) < 0){
-					perror("child failed: ");
+				if (waitpid(pid, &status, 0) == -1){
+					perror("Wait: ");
+				}
+				if (WIFEXITED(status) && WEXITSTATUS(status) != 0){
 					prevCommandPass = false;
-					return;
 				}
 			}
-			prevCommandPass = false;
-			return;
 		}	
 
 		//Splits commandlist into commands with their arguments then calls executeCommand to run them.
@@ -106,9 +101,6 @@ class rshell{
 					}
 					executeCommand(commandsublist);
 					commandsublist.clear();
-					if (prevCommandPass == false){
-						allCount = false;
-					}
 					if (checkBreaker(i)){
 						if (nextConnector == "||"){
 							if (allCount == true){
@@ -135,8 +127,12 @@ class rshell{
 							}
 						}
 						else if (nextConnector == ";"){
-							allCount = true;
-							prevCommandPass = true;
+							if (prevCommandPass == true){
+								allCount = true;
+							}
+							else{
+								allCount = false;
+							}
 						}
 						if (commandlist.at(i) == "|"){
 							nextConnector = "||";
