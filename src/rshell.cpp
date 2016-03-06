@@ -54,9 +54,8 @@ class rshell{
 			argv[com.size()] = NULL;
 
 			if (pid == 0){
-				if (execvp(argv[0], argv)){
-					prevCommandPass = true;
-				}
+				prevCommandPass = true;
+				execvp(argv[0], argv);
 				perror("execvp failed: ");
 				prevCommandPass = false;
 				_exit(1);
@@ -132,7 +131,15 @@ class rshell{
 							allCount = true;
 							prevCommandPass = true;
 						}
-						nextConnector = commandlist.at(i);
+						if (commandlist.at(i) == "|"){
+							nextConnector = "||";
+						}
+						else if (commandlist.at(i) == "&"){
+							nextConnector = "&&";
+						}
+						else if (commandlist.at(i) == ";"){
+							nextConnector = ";";
+						}
 					}
 					i++;
 				}
