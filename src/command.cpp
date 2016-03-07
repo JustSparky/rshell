@@ -12,8 +12,10 @@ class command{
 	protected:
 		vector<string> commandlist;
 		bool commandPass;
+		bool prevCommandPass;
 		string commandType;
 		bool allCount;
+		bool forceExit;
 		string nextConnector;
 	public:
 		command(){}
@@ -21,13 +23,17 @@ class command{
 			commandlist = c;
 			commandType = ";";
 			allCount = true;
-			nextConnector = ";"
+			prevCommandPass = true;
+			nextConnector = ";";
+			forceExit = false;
 		}
 		command(vector<string> c, string t){
 			commandlist = c;
 			commandType = t;
+			prevCommandPass = true;
+			forceExit = false;
 			allCount = true;
-			nextConnector = ";"
+			nextConnector = ";";
 		}
 		bool getPass(){
 			return commandPass;
@@ -82,7 +88,7 @@ class command{
 						}
 						if (commandlist.at(i) == "["){
 							i++;
-							commandsublist.push_back(commandlist.at(i);
+							commandsublist.push_back(commandlist.at(i));
 							if (commandlist.at(i) == "-e" || commandlist.at(i) == "-f" || commandlist.at(i) == "d"){
 								i++;
 								commandsublist.push_back(commandlist.at(i));
@@ -265,12 +271,12 @@ class command{
 		}
 		bool fileExists(string& path){
 			struct stat buffer;
-			return (stat(file, &buffer) == 0);
+			return (stat(path.c_str(), &buffer) == 0);
 		}
 
 		bool dirExists(string& path){
 			struct stat buffer;
-			if (stat(path, &buffer) == 0 && S_ISDIR(buffer.st_mode)){
+			if (stat(path.c_str(), &buffer) == 0 && S_ISDIR(buffer.st_mode)){
 				return true;
 			}
 			return false;
@@ -278,7 +284,7 @@ class command{
 		
 		bool regFileExists(string& path){
 			struct stat buffer;
-			if (stat(path, &buffer) == 0 && S_ISREG(buffer.st_mode)){
+			if (stat(path.c_str(), &buffer) == 0 && S_ISREG(buffer.st_mode)){
 				return true;
 			}
 			return false;

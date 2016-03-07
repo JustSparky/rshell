@@ -46,7 +46,7 @@ class rshell{
 		void commandBuilder(){
 			vector<string> tempVec;
 			string tempConnect;
-			for(int i = 0; i < commandlist.size(); ++i){
+			for(unsigned int i = 0; i < commandlist.size(); ++i){
 				if(!checkParen(i)){ 
 					if(i != 0){
 						if( (commandlist.at(i - 1) == ")") && (checkBreaker(i)) ){
