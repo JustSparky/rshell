@@ -80,7 +80,7 @@ class command{
 							runCommand(commandsublist);
 							return;
 						}
-						if (commandlist.at(i) == "[" || commandlist.at(i) == "test"){
+						if (commandlist.at(i) == "["){
 							i++;
 							commandsublist.push_back(commandlist.at(i);
 							if (commandlist.at(i) == "-e" || commandlist.at(i) == "-f" || commandlist.at(i) == "d"){
@@ -90,8 +90,31 @@ class command{
 							else{
 								i++;
 							}
+							if (commandlist.at(i) == "]"){
+								i++;
+								checkTest(commandsublist);
+								commandsublist.clear();
+							}
+							else{
+								cout << "Error: Missing close bracket." << endl;
+								_exit(1);
+							}
+							break;
 						}
-
+						if (commandlist.at(i) == "test"){
+							i++;
+							commandsublist.push_back(commandlist.at(i));
+							if (commandlist.at(i) == "-e" || commandlist.at(i) == "-f" || commandlist.at(i) == "d"){
+								i++;
+								commandsublist.push_back(commandlist.at(i));
+							}
+							else{
+								i++;
+							}
+							checkTest(commandsublist);
+							commandsublist.clear();
+							break;
+						}
 								
 						//Adds command to the list
 						commandsublist.push_back(commandlist.at(i));
