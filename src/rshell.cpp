@@ -53,14 +53,15 @@ class rshell{
 						if( (commandlist.at(i - 1) == ")") && (checkBreaker(i)) ){
 							if( commandlist.at(i) == ";"){
 								tempConnect = ";";
+								tempVec.push_back(commandlist.at(i));
 							}
 							else if( commandlist.at(i) == "|"){
 								tempConnect = "||";
-								i++;
+								tempVec.push_back(commandlist.at(i));
 							}
 							else{
 								tempConnect = "&&";
-								i++;
+								tempVec.push_back(commandlist.at(i));
 							}
 						}
 						else{
