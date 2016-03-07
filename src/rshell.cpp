@@ -84,7 +84,7 @@ class rshell{
 			if(i == commandlist.size()){
 				vecCommands.push(new command(tempVec) );
 			}
-			if(commandlist.size() == 1){
+			else if(commandlist.size() == 1){
 				vecCommands.push(new command(tempVec) );
 			}
 		}

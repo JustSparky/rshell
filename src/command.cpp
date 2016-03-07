@@ -190,6 +190,23 @@ class command{
 				}
 				else{
 					i++;
+					if (i < commandlist.size()){
+						if (checkBreaker(i)){
+							if (commandlist.at(i) == "&"){
+								i++;
+								i++;
+								nextConnector = "&&";
+							}
+							else if (commandlist.at(i) == "|"){
+								i++;
+								i++;
+								nextConnector = "||";
+							}
+							else if (commandlist.at(i) == ";"){
+								nextConnector = ";";
+							}
+						}
+					}
 				}
 			}
 		}
@@ -302,7 +319,12 @@ class command{
 				}
 				else if (commandType == ";"){
 					runAllCommands();
-					commandPass = true;
+					if (allCount){
+						commandPass = true;
+					}
+					else{
+						commandPass = false;
+					}
 				}
 			}
 			else{
