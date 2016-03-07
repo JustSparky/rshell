@@ -1,9 +1,23 @@
 echo "Test with ls: "
-    ls
+	./../bin/rshell << EOF
+ls
+exit
+EOF
+
 echo "Test with ls -a: "
-    ls -a
+	./../bin/rshell << EOF
+ls -a
+exit
+EOF
+
 echo "Test with pwd: "
-    pwd
+	./../bin/rshell << EOF
+pwd
+exit
+EOF
+
 echo "Test with exit: "
-    exit
-echo "Shouldn't print"    
+	./../bin/rshell << EOF
+exit
+exit
+EOF

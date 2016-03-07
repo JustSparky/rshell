@@ -180,6 +180,9 @@ class rshell{
 					nextConnector = ";";
 					prevCommandPass = true;	
 				}
+				else{
+					return;
+				}
 			}
 		}
 };
