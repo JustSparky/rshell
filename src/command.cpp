@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <cstdio>
 #include <sys/wait.h>
+#include <sys/stat.h>
 
 using namespace std;
 
@@ -199,6 +200,27 @@ class command{
 			}
 			return false;
 		}
+		
+		bool fileExists(string& path){
+			struct stat buffer;
+			return (stat(file, &buffer) == 0);
+		}
+
+		bool dirExists(string& path){
+			struct stat buffer;
+			if (stat(path, &buffer) == 0 && S_ISDIR(buffer.st_mode)){
+				return true;
+			}
+			return false;
+		}
+		
+		bool regFileExists(string& path){
+			struct stat buffer;
+			if (stat(path, &buffer) == 0 && S_ISREG(buffer.st_mode)){
+				return true;
+			}
+			return false;
+		}
 		void execute(bool prevCommand){
 			if (prevCommand){
 				if (commandType == "&&"){
@@ -236,4 +258,5 @@ class command{
 				}
 			}
 		}
+
 };
