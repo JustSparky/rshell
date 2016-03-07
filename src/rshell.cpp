@@ -21,7 +21,8 @@ class rshell{
 		bool prevCommandPass;
 		bool allCount;
 		bool forceExit;
-		int prevParen;
+		int numParen;
+		int numBrack;
 	public:
 		//Constructor
 		rshell(){
@@ -39,6 +40,18 @@ class rshell{
 			for (tokenizer<char_separator<char> >::iterator i = tokenlist.begin(); i != tokenlist.end(); i++){
 				string com(*i);
 				commandlist.push_back(com);
+			}
+			for(unsigned c = 0; c < commandlist.size(); ++c){
+				if(commandlist.at(c) == "("){ numParen++; }
+				if(commandlist.at(c) == ")"){ numParen--; }
+				if(commandlist.at(c) == "["){ numBrack++; }
+				if(commandlist.at(c) == "]"){ numBrack--; }
+			}
+			if(numParen != 0){
+				cout << "Invalid number of parenthesis" << endl;
+			}
+			if(numBrack != 0){
+				cout << "Invalid number of brackets" << endl;
 			}
 		}
 		
