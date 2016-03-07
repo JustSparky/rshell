@@ -6,6 +6,7 @@
 #include <cstdio>
 #include <sys/wait.h>
 #include <queue>
+#include "command.cpp"
 
 using namespace boost;
 using namespace std;
@@ -80,159 +81,13 @@ class rshell{
 				}
 			}
 		}
-					
-
-
-			
-
-		void queueBuilder(){
-			for(int i = 0; i < commandlist.size(); i++){
-				
-				
 
 		//Splits commandlist into commands with their arguments then calls executeCommand to run them.
 		void executeAllCommands(){
-			vector<string> commandsublist;
-			unsigned int i = 0;
-			unsigned int j = 0;
-			while (i < commandlist.size()){
-				j = 0;
-				if (checkCommandRun()){
-					while (!checkBreaker(i)){
-						//Exit check
-						if (commandlist.at(i) == "exit"){
-							cout << "Forced Exit." << endl;
-							forceExit = true;
-							_Exit(0);
-						}
-						// Comment check
-						if (commandlist.at(i) == "#" || checkComment(commandlist.at(i))){
-							executeCommand(commandsublist);
-							return;
-						}
-
-						//Adds command to the list
-						commandsublist.push_back(commandlist.at(i));
-						i++;
-						j++;
-						if (i == commandlist.size()){
-							executeCommand(commandsublist);
-							return;
-						}
-					}
-					executeCommand(commandsublist);
-					commandsublist.clear();
-					if (checkBreaker(i)){
-						if (nextConnector == "||"){
-							if (allCount == true){
-								prevCommandPass = true;
-							}
-							else{
-								if (prevCommandPass == false){
-									allCount = false;
-								}
-								else{
-									allCount = true;
-								}
-							}
-						}
-						else if (nextConnector == "&&"){
-							if (allCount == true){
-								if (prevCommandPass == false){
-									allCount = false;
-								}
-							}
-							else{
-								allCount = false;
-								prevCommandPass = false;
-							}
-						}
-						else if (nextConnector == ";"){
-							if (prevCommandPass == true){
-								allCount = true;
-							}
-							else{
-								allCount = false;
-							}
-						}
-						if (commandlist.at(i) == "|"){
-							nextConnector = "||";
-						}
-						else if (commandlist.at(i) == "&"){
-							nextConnector = "&&";
-						}
-						else if (commandlist.at(i) == ";"){
-							nextConnector = ";";
-						}
-						i++;
-					}
-					i++;
-				}
-				else{
-					i++;
-				}
-			}
-		}
-
-		//	Checks if there is a '#' at the front of the string
-		bool checkComment(string str){
-			if (str.at(0) == '#'){
-				return true;
-			}
-			return false;
-		}
-		
-		//	Checks if the string is a breaker
-		bool checkBreaker(int i){
-			if ( (unsigned)i < commandlist.size() + 1){
-				if (commandlist.at(i) == "|" && commandlist.at(i + 1) == "|"){
-					return true;
-				}
-				else if (commandlist.at(i) == "&" && commandlist.at(i + 1) == "&"){
-					return true;
-				}
-				else if (commandlist.at(i) == ";"){
-					return true;
-				}
-				else{
-					return false;
-				}
-			}
-			else if( (unsigned)i == commandlist.size() + 1){
-				if(commandlist.at(i) == ";"){
-					return true;
-				}
-				return false;
-			}
-			else{
-				return false;
-			}
-		}
-	
-
-		// Checks if the next command should be run
-		bool checkCommandRun(){
-			if (nextConnector == "||"){
-				if(allCount == true){
-					return false;
-				}
-				else{
-					return true;
-				}
-			}
-			else if (nextConnector == "&&"){
-				if(allCount == true){
-					return true;
-				}
-				else{
-					return false;
-				}
-			}
-			else if (nextConnector == ";"){
-				return true;
-			}
-			else{
-				return false;
+			while (!vecCommands.empty()){
+				vecCommands.front()->execute(prevCommandPass);
+				prevCommandPass = vecCommands.front()->getPass();
+				vecCommands.pop();
 			}
 		}
 
