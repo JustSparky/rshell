@@ -92,7 +92,12 @@ class command{
 							}
 							if (commandlist.at(i) == "]"){
 								i++;
-								checkTest(commandsublist);
+								if (checkTest(commandsublist)){
+									cout << "(True)" << endl;
+								}
+								else{
+									cout << "(False)" << endl;
+								}
 								commandsublist.clear();
 							}
 							else{
@@ -111,7 +116,12 @@ class command{
 							else{
 								i++;
 							}
-							checkTest(commandsublist);
+							if (checkTest(commandsublist)){
+								cout << "(True)" << endl;
+							}
+							else{
+								cout << "(False)" << endl;
+							}
 							commandsublist.clear();
 							break;
 						}
