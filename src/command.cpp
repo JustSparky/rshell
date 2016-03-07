@@ -88,15 +88,12 @@ class command{
 						}
 						if (commandlist.at(i) == "["){
 							i++;
-							cout << "detected";
 							commandsublist.push_back(commandlist.at(i));
 							if (commandlist.at(i) == "-e" || commandlist.at(i) == "-f" || commandlist.at(i) == "-d"){
 								i++;
 								commandsublist.push_back(commandlist.at(i));
 							}
-							else{
-								i++;
-							}
+							i++;
 							if (commandlist.at(i) == "]"){
 								i++;
 								if (checkTest(commandsublist)){
@@ -113,15 +110,12 @@ class command{
 							}
 							break;
 						}
-						if (commandlist.at(i) == "test"){
+						else if (commandlist.at(i) == "test"){
 							i++;
 							commandsublist.push_back(commandlist.at(i));
-							if (commandlist.at(i) == "-e" || commandlist.at(i) == "-f" || commandlist.at(i) == "d"){
+							if (commandlist.at(i) == "-e" || commandlist.at(i) == "-f" || commandlist.at(i) == "-d"){
 								i++;
 								commandsublist.push_back(commandlist.at(i));
-							}
-							else{
-								i++;
 							}
 							if (checkTest(commandsublist)){
 								cout << "(True)" << endl;
@@ -132,7 +126,6 @@ class command{
 							commandsublist.clear();
 							break;
 						}
-								
 						//Adds command to the list
 						commandsublist.push_back(commandlist.at(i));
 						i++;
@@ -145,6 +138,9 @@ class command{
 					if (commandsublist.size() > 0){
 						runCommand(commandsublist);
 						commandsublist.clear();
+					}
+					if (i >= commandlist.size()){
+						return;
 					}
 					if (checkBreaker(i)){
 						if (nextConnector == "||"){
@@ -267,7 +263,7 @@ class command{
 				return dirExists(temp.at(1));
 			}
 			else{
-				return fileExists(temp.at(1));
+				return fileExists(temp.at(0));
 			}
 		}
 		bool fileExists(string& path){
