@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <cstdio>
 #include <sys/wait.h>
+#include <queue>
 
 using namespace boost;
 using namespace std;
@@ -15,9 +16,11 @@ class rshell{
 		string commands;
 		string nextConnector;
 		vector<string> commandlist;
+		queue<command> vecCommands;
 		bool prevCommandPass;
 		bool allCount;
 		bool forceExit;
+		int prevParen;
 	public:
 		//Constructor
 		rshell(){
@@ -31,44 +34,61 @@ class rshell{
 		// Parses the string (strings ending in ';' will keep the ';')
 		void parseAllCommands(){
 			char_separator<char> delims(" ","&,;,|,(,),[,]");
-			/* code for parenthesis/brackets
-			 * char_separator<char> delims(" ", " &,;,|,(,),[,]");
-			*/
 			tokenizer<char_separator<char> > tokenlist(commands, delims);
 			for (tokenizer<char_separator<char> >::iterator i = tokenlist.begin(); i != tokenlist.end(); i++){
 				string com(*i);
 				commandlist.push_back(com);
-				cout << com << endl;
 			}
 		}
-
-		// Executes one command and sets prevCommandPass to true or false.
-		void executeCommand(vector<string> com){
-			char* argv[1024];
-
-			for(unsigned int i = 0; i < com.size(); i++){
-				argv[i] = (char*)com.at(i).c_str();
-			}
-			argv[com.size()] = NULL;
-
-			pid_t pid;
-			int status;
-			pid = fork();
-			if (pid == 0){
-				prevCommandPass = true;
-				execvp(argv[0], argv);
-				perror("execvp failed: ");
-				exit(-1);
-			}
-			else{
-				if (waitpid(pid, &status, 0) == -1){
-					perror("Wait: ");
+		
+		// Builds commands and places them in a queue in order of precedence
+		void commandBuilder(){
+			vector<string> tempVec;
+			string tempConnect;
+			for(int i = 0; i < commandlist.size(); ++i){
+				if(!checkParen(i)){ 
+					if(i != 0){
+						if( (commandlist.at(i - 1) == ")") && (checkbreaker(i)) ){
+							if( commandlist.at(i) == ";"){
+								tempConnect = ";";
+							}
+							else if( commandlist.at(i) == "|"){
+								tempConnect = "||";
+								i++;
+							}
+							else{
+								tempConnect = "&&";
+								i++;
+							}
+						}
+						else{
+							tempVec.push_back(commandlist.at(i));
+						}
+					}
+					else{
+						tempVec.push_back(commandlist.at(i));
+					}
 				}
-				if (WIFEXITED(status) && WEXITSTATUS(status) != 0){
-					prevCommandPass = false;
+				else if(commandlist.at(i) == ")"){
+					if(tempConnect.empty()){
+						vecCommands.push( command(tempVec) );
+					}
+					else{
+						vecCommands.push( command(tempVec, tempConnect) );
+						tempConnector.clear();
+					}
 				}
 			}
-		}	
+		}
+					
+
+
+			
+
+		void queueBuilder(){
+			for(int i = 0; i < commandlist.size(); i++){
+				
+				
 
 		//Splits commandlist into commands with their arguments then calls executeCommand to run them.
 		void executeAllCommands(){
@@ -90,6 +110,7 @@ class rshell{
 							executeCommand(commandsublist);
 							return;
 						}
+
 						//Adds command to the list
 						commandsublist.push_back(commandlist.at(i));
 						i++;
@@ -213,6 +234,28 @@ class rshell{
 			else{
 				return false;
 			}
+		}
+
+		//Checks for Parenthesis
+		bool checkParen(unsigned i){
+			if( commandlist.at(i) == "(" ){
+				return true;
+			}
+			if( commandlist.at(i) == ")" ){
+				return true;
+			}
+			return false;
+		}
+
+		//Checks for brackets
+		bool checkBrack(unsigned i_){
+			if( commandlist.at(i) == "[" ){
+				return true;
+			}
+			if( commandlist.at(i) == "]" ){
+				return true;
+			}
+			return false;
 		}
 
 		//Starts the program.
