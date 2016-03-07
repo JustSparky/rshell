@@ -308,7 +308,6 @@ class command{
 		}
 		void execute(bool prevCommand){
 			if (checkBreaker(0)){
-				cout << "Yay";
 				commandType = commandlist.at(0) + commandlist.at(1);
 				commandlist.erase(commandlist.begin(), commandlist.begin() + 2);
 			}

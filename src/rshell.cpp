@@ -75,15 +75,19 @@ class rshell{
 				else if(commandlist.at(i) == ")"){
 					if(tempConnect.empty()){
 						vecCommands.push(new command(tempVec) );
+						tempVec.clear();
 					}
 					else{
 						vecCommands.push(new command(tempVec, tempConnect) );
 						tempConnect.clear();
+						tempVec.clear();
 					}
 				}
 			}
 			if(i == commandlist.size()){
-				vecCommands.push(new command(tempVec) );
+				if (tempVec.size() > 0){
+					vecCommands.push(new command(tempVec) );
+				}
 			}
 			else if(commandlist.size() == 1){
 				vecCommands.push(new command(tempVec) );
