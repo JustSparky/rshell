@@ -80,6 +80,9 @@ class rshell{
 					}
 				}
 			}
+			if (commandlist.size() == 1){
+				vecCommands.push(new command(tempVec));
+			}
 		}
 
 		//Splits commandlist into commands with their arguments then calls executeCommand to run them.
@@ -146,6 +149,7 @@ class rshell{
 				cout << "$";
 				getline(cin, commands);
 				parseAllCommands();
+				commandBuilder();
 				executeAllCommands();
 				commandlist.clear();
 				nextConnector = ";";
