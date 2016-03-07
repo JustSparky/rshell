@@ -46,7 +46,8 @@ class rshell{
 		void commandBuilder(){
 			vector<string> tempVec;
 			string tempConnect;
-			for(unsigned int i = 0; i < commandlist.size(); ++i){
+			unsigned int i = 0;
+			for(; i < commandlist.size(); ++i){
 				if(!checkParen(i)){ 
 					if(i != 0){
 						if( (commandlist.at(i - 1) == ")") && (checkBreaker(i)) ){
@@ -79,6 +80,12 @@ class rshell{
 						tempConnect.clear();
 					}
 				}
+			}
+			if(i == commandlist.size()){
+				vecCommands.push(new command(tempVec) );
+			}
+			if(commandlist.size() == 1){
+				vecCommands.push(new command(tempVec) );
 			}
 		}
 
@@ -146,6 +153,7 @@ class rshell{
 				cout << "$";
 				getline(cin, commands);
 				parseAllCommands();
+				commandBuilder();
 				executeAllCommands();
 				commandlist.clear();
 				nextConnector = ";";

@@ -89,7 +89,7 @@ class command{
 						if (commandlist.at(i) == "["){
 							i++;
 							commandsublist.push_back(commandlist.at(i));
-							if (commandlist.at(i) == "-e" || commandlist.at(i) == "-f" || commandlist.at(i) == "d"){
+							if (commandlist.at(i) == "-e" || commandlist.at(i) == "-f" || commandlist.at(i) == "-d"){
 								i++;
 								commandsublist.push_back(commandlist.at(i));
 							}
