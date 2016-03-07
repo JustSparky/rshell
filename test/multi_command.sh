@@ -1,12 +1,46 @@
 echo "Test with ;: "
-    ls; ls
+	./../bin/rshell << EOF
+ls; ls
+exit
+EOF
 echo "Test with || succeed "
-    ls || ls
+	./../bin/rshell << EOF
+ls || ls
+exit
+EOF
+
 echo "Test with || fail"
-    lbt || ls
+	./../bin/rshell << EOF
+lbt || ls
+exit
+EOF
+
 echo "Test with && succeed "
-    pwd && ls
+	./../bin/rshell << EOF
+pwd && ls
+exit
+EOF
+
 echo "Test with && fail "
-    lbb && ls
+	./../bin/rshell << EOF
+lbb && ls
+exit
+EOF
+
 echo "Test with && || and ; mix"
-    pwd && pwd || ls; ls -a
+	./../bin/rshell << EOF
+pwd && pwd || ls; ls -a
+exit
+EOF
+
+echo "test with parenthesis"
+	./../bin/rshell << EOF
+((ls && ls)||ls -a)
+exit
+EOF
+
+echo "test with test"
+	./../bin/rshell << EOF
+[test_test.sh] && ls -a
+exit
+EOF
