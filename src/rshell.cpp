@@ -17,7 +17,7 @@ class rshell{
 		string commands;
 		string nextConnector;
 		vector<string> commandlist;
-		queue<command> vecCommands;
+		queue<command*> vecCommands;
 		bool prevCommandPass;
 		bool allCount;
 		bool forceExit;
@@ -49,7 +49,7 @@ class rshell{
 			for(int i = 0; i < commandlist.size(); ++i){
 				if(!checkParen(i)){ 
 					if(i != 0){
-						if( (commandlist.at(i - 1) == ")") && (checkbreaker(i)) ){
+						if( (commandlist.at(i - 1) == ")") && (checkBreaker(i)) ){
 							if( commandlist.at(i) == ";"){
 								tempConnect = ";";
 							}
@@ -72,11 +72,11 @@ class rshell{
 				}
 				else if(commandlist.at(i) == ")"){
 					if(tempConnect.empty()){
-						vecCommands.push( command(tempVec) );
+						vecCommands.push(new command(tempVec) );
 					}
 					else{
-						vecCommands.push( command(tempVec, tempConnect) );
-						tempConnector.clear();
+						vecCommands.push(new command(tempVec, tempConnect) );
+						tempConnect.clear();
 					}
 				}
 			}
@@ -88,6 +88,33 @@ class rshell{
 				vecCommands.front()->execute(prevCommandPass);
 				prevCommandPass = vecCommands.front()->getPass();
 				vecCommands.pop();
+			}
+		}
+
+		//	Checks if the string is a breaker
+		bool checkBreaker(int i){
+			if ( (unsigned)i < commandlist.size() + 1){
+				if (commandlist.at(i) == "|" && commandlist.at(i + 1) == "|"){
+					return true;
+				}
+				else if (commandlist.at(i) == "&" && commandlist.at(i + 1) == "&"){
+					return true;
+				}
+				else if (commandlist.at(i) == ";"){
+					return true;
+				}
+				else{
+					return false;
+				}
+			}
+			else if( (unsigned)i == commandlist.size() + 1){
+				if(commandlist.at(i) == ";"){
+					return true;
+				}
+				return false;
+			}
+			else{
+				return false;
 			}
 		}
 
@@ -103,7 +130,7 @@ class rshell{
 		}
 
 		//Checks for brackets
-		bool checkBrack(unsigned i_){
+		bool checkBrack(unsigned i){
 			if( commandlist.at(i) == "[" ){
 				return true;
 			}

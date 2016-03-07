@@ -300,6 +300,7 @@ class command{
 				else if (commandType == ";"){
 					runAllCommands();
 					commandPass = true;
+				}
 			}
 			else{
 				if (commandType == "&&"){
