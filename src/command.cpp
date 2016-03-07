@@ -35,6 +35,9 @@ class command{
 			allCount = true;
 			nextConnector = ";";
 		}
+		vector<string>& getVector(){
+			return commandlist;
+		}
 		bool getPass(){
 			return commandPass;
 		}
@@ -304,6 +307,11 @@ class command{
 			return false;
 		}
 		void execute(bool prevCommand){
+			if (checkBreaker(0)){
+				cout << "Yay";
+				commandType = commandlist.at(0) + commandlist.at(1);
+				commandlist.erase(commandlist.begin(), commandlist.begin() + 2);
+			}
 			if (prevCommand){
 				if (commandType == "&&"){
 					runAllCommands();
