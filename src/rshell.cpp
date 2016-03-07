@@ -34,7 +34,7 @@ class rshell{
 		}
 
 		// Parses the string (strings ending in ';' will keep the ';')
-		void parseAllCommands(){
+		bool parseAllCommands(){
 			char_separator<char> delims(" ","&,;,|,(,),[,]");
 			tokenizer<char_separator<char> > tokenlist(commands, delims);
 			for (tokenizer<char_separator<char> >::iterator i = tokenlist.begin(); i != tokenlist.end(); i++){
@@ -49,10 +49,13 @@ class rshell{
 			}
 			if(numParen != 0){
 				cout << "Invalid number of parenthesis" << endl;
+				return false;
 			}
 			if(numBrack != 0){
 				cout << "Invalid number of brackets" << endl;
+				return false;
 			}
+			return true;
 		}
 		
 		// Builds commands and places them in a queue in order of precedence
@@ -170,12 +173,13 @@ class rshell{
 			while (!forceExit && commands != "exit"){
 				cout << "$";
 				getline(cin, commands);
-				parseAllCommands();
-				commandBuilder();
-				executeAllCommands();
-				commandlist.clear();
-				nextConnector = ";";
-				prevCommandPass = true;	
+				if(parseAllCommands()){
+					commandBuilder();
+					executeAllCommands();
+					commandlist.clear();
+					nextConnector = ";";
+					prevCommandPass = true;	
+				}
 			}
 		}
 };
