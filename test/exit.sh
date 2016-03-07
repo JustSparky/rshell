@@ -1,10 +1,29 @@
 echo "Test with exit"
-    exit
+	./../bin/rshell << EOF
+exit
+exit
+EOF
+
 echo "Test with ls followed by exit"
-    ls; exit
+	./../bin/rshell << EOF
+ls; exit
+exit
+EOF
+
 echo "Test with multiple exits"
-    exit; exit; exit
+	./../bin/rshell << EOF
+exit; exit; exit
+exit
+EOF
+
 echo "Test with exit then ls"
-    exit; ls
+	./../bin/rshell << EOF
+exit; ls
+exit
+EOF
+
 echo "Test with exit and && and ||"
-    ls && ls -a && exit || ls
+	./../bin/rshell << EOF
+ls && ls -a && exit || ls
+exit
+EOF
