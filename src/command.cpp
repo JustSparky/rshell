@@ -88,6 +88,7 @@ class command{
 						}
 						if (commandlist.at(i) == "["){
 							i++;
+							cout << "detected";
 							commandsublist.push_back(commandlist.at(i));
 							if (commandlist.at(i) == "-e" || commandlist.at(i) == "-f" || commandlist.at(i) == "-d"){
 								i++;
