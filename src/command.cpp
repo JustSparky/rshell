@@ -80,6 +80,19 @@ class command{
 							runCommand(commandsublist);
 							return;
 						}
+						if (commandlist.at(i) == "[" || commandlist.at(i) == "test"){
+							i++;
+							commandsublist.push_back(commandlist.at(i);
+							if (commandlist.at(i) == "-e" || commandlist.at(i) == "-f" || commandlist.at(i) == "d"){
+								i++;
+								commandsublist.push_back(commandlist.at(i));
+							}
+							else{
+								i++;
+							}
+						}
+
+								
 						//Adds command to the list
 						commandsublist.push_back(commandlist.at(i));
 						i++;
@@ -89,8 +102,10 @@ class command{
 							return;
 						}
 					}
-					runCommand(commandsublist);
-					commandsublist.clear();
+					if (commandsublist.size() > 0){
+						runCommand(commandsublist);
+						commandsublist.clear();
+					}
 					if (checkBreaker(i)){
 						if (nextConnector == "||"){
 							if (allCount == true){
@@ -201,6 +216,20 @@ class command{
 			return false;
 		}
 		
+		bool checkTest(vector<string> temp){
+			if (temp.at(0) == "-e"){
+				return fileExists(temp.at(1));
+			}
+			else if (temp.at(0) == "-f"){
+				return regFileExists(temp.at(1));
+			}
+			else if (temp.at(0) == "-d"){
+				return dirExists(temp.at(1));
+			}
+			else{
+				return fileExists(temp.at(1));
+			}
+		}
 		bool fileExists(string& path){
 			struct stat buffer;
 			return (stat(file, &buffer) == 0);
